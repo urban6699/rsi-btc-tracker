@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { Card } from "@/components/ui/card";
 import { PriceTracker } from "@/components/PriceTracker";
 import { RSIChart } from "@/components/RSIChart";
 import { TradingAdvice } from "@/components/TradingAdvice";
+import { MACDChart } from "@/components/MACDChart";
+import { BollingerBands } from "@/components/BollingerBands";
 
 const Index = () => {
   return (
@@ -14,6 +14,12 @@ const Index = () => {
         <TradingAdvice />
         <div className="md:col-span-2">
           <RSIChart />
+        </div>
+        <div className="md:col-span-2">
+          <MACDChart />
+        </div>
+        <div className="md:col-span-2">
+          <BollingerBands />
         </div>
       </div>
     </div>
