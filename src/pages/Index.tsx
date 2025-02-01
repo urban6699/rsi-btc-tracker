@@ -3,6 +3,7 @@ import { RSIChart } from "@/components/RSIChart";
 import { TradingAdvice } from "@/components/TradingAdvice";
 import { MACDChart } from "@/components/MACDChart";
 import { BollingerBands } from "@/components/BollingerBands";
+import { HistoricalPriceChart } from "@/components/HistoricalPriceChart";
 
 const Index = () => {
   return (
@@ -12,6 +13,9 @@ const Index = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
         <PriceTracker />
         <TradingAdvice />
+        <div className="md:col-span-2">
+          <HistoricalPriceChart />
+        </div>
         <div className="md:col-span-2">
           <RSIChart />
         </div>
