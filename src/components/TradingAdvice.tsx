@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
+import { Alert, AlertTitle } from "@/components/ui/alert";
 import axios from "axios";
 
 export const TradingAdvice = () => {
   const [rsi, setRsi] = useState<number | null>(null);
+  const [showBuySignal, setShowBuySignal] = useState(false);
 
   const calculateRSI = (prices: number[], period: number = 14) => {
     const changes = prices.slice(1).map((price, i) => price - prices[i]);
@@ -33,6 +35,7 @@ export const TradingAdvice = () => {
       const prices = response.data.map((kline: any) => parseFloat(kline[4]));
       const currentRSI = calculateRSI(prices);
       setRsi(currentRSI);
+      setShowBuySignal(currentRSI < 30);
       console.log("Current RSI:", currentRSI);
     } catch (error) {
       console.error("Error calculating RSI:", error);
@@ -62,6 +65,13 @@ export const TradingAdvice = () => {
   return (
     <Card className="p-6 bg-gray-800 border-gray-700">
       <h2 className="text-xl font-semibold mb-4">交易建議</h2>
+      {showBuySignal && (
+        <Alert variant="destructive" className="mb-4 border-[#ea384c] bg-[#ea384c]/10">
+          <AlertTitle className="text-[#ea384c]">
+            買入信號！RSI 低於 30，可能是好的買入時機
+          </AlertTitle>
+        </Alert>
+      )}
       <div className="space-y-4">
         <div>
           <p className="text-gray-400 mb-2">當前 RSI</p>
