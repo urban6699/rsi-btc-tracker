@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Bar, CompositeChart } from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Bar, ComposedChart } from "recharts";
 import axios from "axios";
 
 interface KlineData {
@@ -58,7 +58,8 @@ export const MACDChart = () => {
         timestamp: kline.timestamp,
         macd: macdLine[i],
         signal: signalLine[i],
-        histogram: histogram[i]
+        histogram: histogram[i],
+        histogramColor: histogram[i] >= 0 ? "#34d399" : "#ef4444"
       }));
 
       setMacdData(macdDataPoints);
@@ -79,7 +80,7 @@ export const MACDChart = () => {
       <h2 className="text-xl font-semibold mb-4">MACD 指標</h2>
       <div className="h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
-          <CompositeChart data={macdData}>
+          <ComposedChart data={macdData}>
             <XAxis
               dataKey="timestamp"
               tickFormatter={(timestamp) => new Date(timestamp).toLocaleTimeString()}
@@ -106,9 +107,9 @@ export const MACDChart = () => {
             />
             <Bar
               dataKey="histogram"
-              fill={(data: any) => (data.histogram >= 0 ? "#34d399" : "#ef4444")}
+              fill="histogramColor"
             />
-          </CompositeChart>
+          </ComposedChart>
         </ResponsiveContainer>
       </div>
     </Card>
