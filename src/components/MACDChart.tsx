@@ -2,13 +2,12 @@ import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Bar, ComposedChart } from "recharts";
 import axios from "axios";
+import { TimeFrame } from "@/types/common";
 
 interface KlineData {
   timestamp: number;
   close: number;
 }
-
-type TimeFrame = "1h" | "4h" | "1d" | "1w" | "1M";
 
 interface MACDChartProps {
   timeFrame: TimeFrame;

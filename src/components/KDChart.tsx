@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import axios from "axios";
+import { TimeFrame } from "@/types/common";
 
 interface KlineData {
   timestamp: number;
@@ -9,8 +10,6 @@ interface KlineData {
   low: number;
   close: number;
 }
-
-type TimeFrame = "1h" | "4h" | "1d" | "1w" | "1M";
 
 interface KDChartProps {
   timeFrame: TimeFrame;
