@@ -11,6 +11,11 @@ type TimeFrame = "1h" | "4h" | "1d" | "1w" | "1M";
 const Index = () => {
   const [timeFrame, setTimeFrame] = useState<TimeFrame>("1h");
 
+  const handleTimeFrameChange = (newTimeFrame: TimeFrame) => {
+    setTimeFrame(newTimeFrame);
+    console.log(`Time frame changed to: ${newTimeFrame}`);
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
       <h1 className="text-3xl font-bold text-center mb-8">BTC/USDT 交易分析</h1>
@@ -19,7 +24,7 @@ const Index = () => {
         <PriceTracker />
         <TradingAdvice />
         <div className="md:col-span-2">
-          <HistoricalPriceChart />
+          <HistoricalPriceChart onTimeFrameChange={handleTimeFrameChange} />
         </div>
         <div className="md:col-span-2">
           <RSIChart timeFrame={timeFrame} />

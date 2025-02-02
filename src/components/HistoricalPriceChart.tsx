@@ -13,6 +13,10 @@ interface KlineData {
 
 type TimeFrame = "1h" | "4h" | "1d" | "1w" | "1M";
 
+interface HistoricalPriceChartProps {
+  onTimeFrameChange: (timeFrame: TimeFrame) => void;
+}
+
 const timeFrameLimits: Record<TimeFrame, number> = {
   "1h": 480,
   "4h": 480,
@@ -21,7 +25,7 @@ const timeFrameLimits: Record<TimeFrame, number> = {
   "1M": 480
 };
 
-export const HistoricalPriceChart = () => {
+export const HistoricalPriceChart = ({ onTimeFrameChange }: HistoricalPriceChartProps) => {
   const [priceData, setPriceData] = useState<KlineData[]>([]);
   const [lastUpdateTime, setLastUpdateTime] = useState(new Date());
   const [isUpdating, setIsUpdating] = useState(false);
@@ -62,6 +66,13 @@ export const HistoricalPriceChart = () => {
     return () => clearInterval(interval);
   }, [timeFrame]);
 
+  const handleTimeFrameChange = (value: TimeFrame) => {
+    if (value) {
+      setTimeFrame(value);
+      onTimeFrameChange(value);
+    }
+  };
+
   const getTimeFrameLabel = (tf: TimeFrame) => {
     switch (tf) {
       case "1h": return "1小時";
@@ -96,7 +107,7 @@ export const HistoricalPriceChart = () => {
         <ToggleGroup
           type="single"
           value={timeFrame}
-          onValueChange={(value: TimeFrame) => value && setTimeFrame(value)}
+          onValueChange={handleTimeFrameChange}
           className="justify-start"
         >
           {(Object.keys(timeFrameLimits) as TimeFrame[]).map((tf) => (
