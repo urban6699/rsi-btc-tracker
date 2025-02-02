@@ -19,6 +19,15 @@ interface HistoricalPriceChartProps {
   onTimeFrameChange: (timeFrame: TimeFrame) => void;
 }
 
+interface WeeklyAnalysis {
+  weekStart: string;
+  buySignals: number;
+  sellSignals: number;
+  highestPrice: number;
+  lowestPrice: number;
+  priceChange: number;
+}
+
 const timeFrameLimits: Record<TimeFrame, number> = {
   "1h": 480,
   "4h": 480,
@@ -54,6 +63,39 @@ export const HistoricalPriceChart = ({ onTimeFrameChange }: HistoricalPriceChart
   const [lastUpdateTime, setLastUpdateTime] = useState(new Date());
   const [isUpdating, setIsUpdating] = useState(false);
   const [timeFrame, setTimeFrame] = useState<TimeFrame>("1h");
+  const [weeklyAnalysis, setWeeklyAnalysis] = useState<WeeklyAnalysis[]>([]);
+
+  const calculateWeeklyAnalysis = (data: KlineData[]) => {
+    const weeklyData: { [key: string]: KlineData[] } = {};
+    
+    data.forEach(item => {
+      const date = new Date(item.timestamp);
+      const weekStart = new Date(date.setDate(date.getDate() - date.getDay())).toISOString().split('T')[0];
+      
+      if (!weeklyData[weekStart]) {
+        weeklyData[weekStart] = [];
+      }
+      weeklyData[weekStart].push(item);
+    });
+
+    return Object.entries(weeklyData).map(([weekStart, items]) => {
+      const prices = items.map(item => item.price);
+      const highestPrice = Math.max(...prices);
+      const lowestPrice = Math.min(...prices);
+      const buySignals = items.filter(item => item.signal === 'buy').length;
+      const sellSignals = items.filter(item => item.signal === 'sell').length;
+      const priceChange = ((prices[prices.length - 1] - prices[0]) / prices[0]) * 100;
+
+      return {
+        weekStart,
+        buySignals,
+        sellSignals,
+        highestPrice,
+        lowestPrice,
+        priceChange
+      };
+    });
+  };
 
   const fetchHistoricalData = async () => {
     try {
@@ -91,6 +133,7 @@ export const HistoricalPriceChart = ({ onTimeFrameChange }: HistoricalPriceChart
       });
 
       setPriceData(historicalData);
+      setWeeklyAnalysis(calculateWeeklyAnalysis(historicalData));
       setLastUpdateTime(new Date());
       console.log(`Historical price data fetched for ${timeFrame}:`, historicalData);
       console.log('Buy signals:', historicalData.filter(d => d.signal === 'buy').length);
@@ -210,6 +253,38 @@ export const HistoricalPriceChart = ({ onTimeFrameChange }: HistoricalPriceChart
               />
             </LineChart>
           </ResponsiveContainer>
+        </div>
+
+        <div className="mt-4">
+          <h3 className="text-lg font-semibold mb-3">週度分析</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-700">
+                  <th className="text-left py-2">週起始日</th>
+                  <th className="text-right py-2">買入信號</th>
+                  <th className="text-right py-2">賣出信號</th>
+                  <th className="text-right py-2">最高價</th>
+                  <th className="text-right py-2">最低價</th>
+                  <th className="text-right py-2">價格變化</th>
+                </tr>
+              </thead>
+              <tbody>
+                {weeklyAnalysis.map((week) => (
+                  <tr key={week.weekStart} className="border-b border-gray-700">
+                    <td className="py-2">{week.weekStart}</td>
+                    <td className="text-right text-red-500">{week.buySignals}</td>
+                    <td className="text-right text-green-500">{week.sellSignals}</td>
+                    <td className="text-right">${week.highestPrice.toLocaleString()}</td>
+                    <td className="text-right">${week.lowestPrice.toLocaleString()}</td>
+                    <td className={`text-right ${week.priceChange >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                      {week.priceChange.toFixed(2)}%
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </Card>
