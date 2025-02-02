@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import axios from "axios";
-
-type TimeFrame = "15m" | "1h" | "4h" | "1d" | "1w" | "1M";
+import { TimeFrame } from "@/types/common";
 
 interface TradingAdviceProps {
   timeFrame: TimeFrame;

@@ -5,8 +5,7 @@ import { MACDChart } from "@/components/MACDChart";
 import { HistoricalPriceChart } from "@/components/HistoricalPriceChart";
 import { KDChart } from "@/components/KDChart";
 import { useState } from "react";
-
-type TimeFrame = "15m" | "1h" | "4h" | "1d" | "1w" | "1M";
+import { TimeFrame } from "@/types/common";
 
 const Index = () => {
   const [timeFrame, setTimeFrame] = useState<TimeFrame>("15m");

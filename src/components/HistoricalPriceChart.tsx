@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import axios from "axios";
+import { TimeFrame } from "@/types/common";
 
 interface KlineData {
   timestamp: number;
@@ -12,8 +13,6 @@ interface KlineData {
   rsi?: number;
   signal?: 'buy' | 'sell';
 }
-
-type TimeFrame = "15m" | "1h" | "4h" | "1d" | "1w" | "1M";
 
 interface HistoricalPriceChartProps {
   onTimeFrameChange: (timeFrame: TimeFrame) => void;
