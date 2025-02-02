@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Scatter } from "recharts";
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -9,6 +9,8 @@ import axios from "axios";
 interface KlineData {
   timestamp: number;
   price: number;
+  rsi?: number;
+  signal?: 'buy' | 'sell';
 }
 
 type TimeFrame = "1h" | "4h" | "1d" | "1w" | "1M";
@@ -23,6 +25,28 @@ const timeFrameLimits: Record<TimeFrame, number> = {
   "1d": 480,
   "1w": 480,
   "1M": 480
+};
+
+const calculateRSI = (prices: number[], period: number = 14) => {
+  const changes = prices.slice(1).map((price, i) => price - prices[i]);
+  const gains = changes.map(change => change > 0 ? change : 0);
+  const losses = changes.map(change => change < 0 ? -change : 0);
+
+  let avgGain = gains.slice(0, period).reduce((a, b) => a + b) / period;
+  let avgLoss = losses.slice(0, period).reduce((a, b) => a + b) / period;
+
+  const rsiValues: number[] = [];
+  
+  for (let i = period; i < changes.length; i++) {
+    avgGain = (avgGain * (period - 1) + gains[i]) / period;
+    avgLoss = (avgLoss * (period - 1) + losses[i]) / period;
+    
+    const rs = avgGain / avgLoss;
+    const rsi = 100 - (100 / (1 + rs));
+    rsiValues.push(rsi);
+  }
+
+  return rsiValues;
 };
 
 export const HistoricalPriceChart = ({ onTimeFrameChange }: HistoricalPriceChartProps) => {
@@ -45,10 +69,26 @@ export const HistoricalPriceChart = ({ onTimeFrameChange }: HistoricalPriceChart
         }
       );
 
-      const historicalData: KlineData[] = response.data.map((kline: any) => ({
-        timestamp: kline[0],
-        price: parseFloat(kline[4])  // 收盤價
-      }));
+      const prices = response.data.map((kline: any) => parseFloat(kline[4]));
+      const rsiValues = calculateRSI(prices);
+
+      const historicalData: KlineData[] = response.data.map((kline: any, index: number) => {
+        const price = parseFloat(kline[4]);
+        const rsi = rsiValues[index - 14] || undefined;
+        let signal: 'buy' | 'sell' | undefined;
+        
+        if (rsi !== undefined) {
+          if (rsi < 30) signal = 'buy';
+          else if (rsi > 70) signal = 'sell';
+        }
+
+        return {
+          timestamp: kline[0],
+          price,
+          rsi,
+          signal
+        };
+      });
 
       setPriceData(historicalData);
       setLastUpdateTime(new Date());
@@ -62,7 +102,7 @@ export const HistoricalPriceChart = ({ onTimeFrameChange }: HistoricalPriceChart
 
   useEffect(() => {
     fetchHistoricalData();
-    const interval = setInterval(fetchHistoricalData, 3600000); // 每小時更新一次
+    const interval = setInterval(fetchHistoricalData, 3600000);
     return () => clearInterval(interval);
   }, [timeFrame]);
 
@@ -149,6 +189,20 @@ export const HistoricalPriceChart = ({ onTimeFrameChange }: HistoricalPriceChart
                 stroke="#34d399"
                 strokeWidth={2}
                 dot={false}
+              />
+              <Scatter
+                name="買點"
+                data={priceData.filter(d => d.signal === 'buy')}
+                dataKey="price"
+                fill="#22c55e"
+                shape="circle"
+              />
+              <Scatter
+                name="賣點"
+                data={priceData.filter(d => d.signal === 'sell')}
+                dataKey="price"
+                fill="#ef4444"
+                shape="circle"
               />
             </LineChart>
           </ResponsiveContainer>
