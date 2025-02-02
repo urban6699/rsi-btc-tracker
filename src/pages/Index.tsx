@@ -6,10 +6,10 @@ import { HistoricalPriceChart } from "@/components/HistoricalPriceChart";
 import { KDChart } from "@/components/KDChart";
 import { useState } from "react";
 
-type TimeFrame = "1h" | "4h" | "1d" | "1w" | "1M";
+type TimeFrame = "15m" | "1h" | "4h" | "1d" | "1w" | "1M";
 
 const Index = () => {
-  const [timeFrame, setTimeFrame] = useState<TimeFrame>("1h");
+  const [timeFrame, setTimeFrame] = useState<TimeFrame>("15m");
 
   const handleTimeFrameChange = (newTimeFrame: TimeFrame) => {
     setTimeFrame(newTimeFrame);

@@ -13,7 +13,7 @@ interface KlineData {
   signal?: 'buy' | 'sell';
 }
 
-type TimeFrame = "1h" | "4h" | "1d" | "1w" | "1M";
+type TimeFrame = "15m" | "1h" | "4h" | "1d" | "1w" | "1M";
 
 interface HistoricalPriceChartProps {
   onTimeFrameChange: (timeFrame: TimeFrame) => void;
@@ -29,6 +29,7 @@ interface WeeklyAnalysis {
 }
 
 const timeFrameLimits: Record<TimeFrame, number> = {
+  "15m": 480,
   "1h": 480,
   "4h": 480,
   "1d": 480,
@@ -62,7 +63,7 @@ export const HistoricalPriceChart = ({ onTimeFrameChange }: HistoricalPriceChart
   const [priceData, setPriceData] = useState<KlineData[]>([]);
   const [lastUpdateTime, setLastUpdateTime] = useState(new Date());
   const [isUpdating, setIsUpdating] = useState(false);
-  const [timeFrame, setTimeFrame] = useState<TimeFrame>("1h");
+  const [timeFrame, setTimeFrame] = useState<TimeFrame>("15m");
   const [weeklyAnalysis, setWeeklyAnalysis] = useState<WeeklyAnalysis[]>([]);
 
   const calculateWeeklyAnalysis = (data: KlineData[]) => {
@@ -160,6 +161,7 @@ export const HistoricalPriceChart = ({ onTimeFrameChange }: HistoricalPriceChart
 
   const getTimeFrameLabel = (tf: TimeFrame) => {
     switch (tf) {
+      case "15m": return "15分鐘";
       case "1h": return "1小時";
       case "4h": return "4小時";
       case "1d": return "日線";
