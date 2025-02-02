@@ -194,14 +194,14 @@ export const HistoricalPriceChart = ({ onTimeFrameChange }: HistoricalPriceChart
                 name="買點"
                 data={priceData.filter(d => d.signal === 'buy')}
                 dataKey="price"
-                fill="#22c55e"
+                fill="#ef4444"
                 shape="circle"
               />
               <Scatter
                 name="賣點"
                 data={priceData.filter(d => d.signal === 'sell')}
                 dataKey="price"
-                fill="#ef4444"
+                fill="#22c55e"
                 shape="circle"
               />
             </LineChart>
