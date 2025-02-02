@@ -2,8 +2,8 @@ import { PriceTracker } from "@/components/PriceTracker";
 import { RSIChart } from "@/components/RSIChart";
 import { TradingAdvice } from "@/components/TradingAdvice";
 import { MACDChart } from "@/components/MACDChart";
-import { BollingerBands } from "@/components/BollingerBands";
 import { HistoricalPriceChart } from "@/components/HistoricalPriceChart";
+import { KDChart } from "@/components/KDChart";
 
 const Index = () => {
   return (
@@ -23,7 +23,7 @@ const Index = () => {
           <MACDChart />
         </div>
         <div className="md:col-span-2">
-          <BollingerBands />
+          <KDChart />
         </div>
       </div>
     </div>
