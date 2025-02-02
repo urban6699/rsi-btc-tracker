@@ -8,7 +8,13 @@ interface KlineData {
   close: number;
 }
 
-export const RSIChart = () => {
+type TimeFrame = "1h" | "4h" | "1d" | "1w" | "1M";
+
+interface RSIChartProps {
+  timeFrame: TimeFrame;
+}
+
+export const RSIChart = ({ timeFrame }: RSIChartProps) => {
   const [rsiData, setRsiData] = useState<{ timestamp: number; rsi: number }[]>([]);
 
   const calculateRSI = (prices: number[], period: number = 14) => {
@@ -40,7 +46,7 @@ export const RSIChart = () => {
         {
           params: {
             symbol: "BTCUSDT",
-            interval: "1h",
+            interval: timeFrame,
             limit: 100
           }
         }
@@ -60,7 +66,7 @@ export const RSIChart = () => {
       }));
 
       setRsiData(rsiDataPoints);
-      console.log("RSI data calculated:", rsiDataPoints);
+      console.log(`RSI data calculated for ${timeFrame}:`, rsiDataPoints);
     } catch (error) {
       console.error("Error fetching kline data:", error);
     }
@@ -70,7 +76,7 @@ export const RSIChart = () => {
     fetchKlineData();
     const interval = setInterval(fetchKlineData, 3600000); // Update every hour
     return () => clearInterval(interval);
-  }, []);
+  }, [timeFrame]);
 
   return (
     <Card className="p-6 bg-gray-800 border-gray-700">

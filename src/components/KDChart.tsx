@@ -10,8 +10,14 @@ interface KlineData {
   close: number;
 }
 
-export const KDChart = () => {
-  const [kdData, setKDData] = useState<{ timestamp: number; k: number; d: number }[]>([]);
+type TimeFrame = "1h" | "4h" | "1d" | "1w" | "1M";
+
+interface KDChartProps {
+  timeFrame: TimeFrame;
+}
+
+export const KDChart = ({ timeFrame }: KDChartProps) => {
+  const [kdData, setKdData] = useState<{ timestamp: number; k: number; d: number }[]>([]);
 
   const calculateKD = (data: KlineData[], period: number = 14) => {
     const calculateLowestLow = (data: KlineData[], startIndex: number, period: number) => {
@@ -57,7 +63,7 @@ export const KDChart = () => {
         {
           params: {
             symbol: "BTCUSDT",
-            interval: "1h",
+            interval: timeFrame,
             limit: 100
           }
         }
@@ -78,8 +84,8 @@ export const KDChart = () => {
         d: d[i]
       }));
 
-      setKDData(kdDataPoints);
-      console.log("KD data calculated:", kdDataPoints);
+      setKdData(kdDataPoints);
+      console.log(`KD data calculated for ${timeFrame}:`, kdDataPoints);
     } catch (error) {
       console.error("Error fetching kline data:", error);
     }
@@ -89,7 +95,7 @@ export const KDChart = () => {
     fetchKlineData();
     const interval = setInterval(fetchKlineData, 3600000); // Update every hour
     return () => clearInterval(interval);
-  }, []);
+  }, [timeFrame]);
 
   return (
     <Card className="p-6 bg-gray-800 border-gray-700">

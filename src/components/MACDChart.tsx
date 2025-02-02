@@ -8,7 +8,13 @@ interface KlineData {
   close: number;
 }
 
-export const MACDChart = () => {
+type TimeFrame = "1h" | "4h" | "1d" | "1w" | "1M";
+
+interface MACDChartProps {
+  timeFrame: TimeFrame;
+}
+
+export const MACDChart = ({ timeFrame }: MACDChartProps) => {
   const [macdData, setMacdData] = useState<{ timestamp: number; macd: number; signal: number; histogram: number }[]>([]);
 
   const calculateEMA = (prices: number[], period: number) => {
@@ -40,7 +46,7 @@ export const MACDChart = () => {
         {
           params: {
             symbol: "BTCUSDT",
-            interval: "1h",
+            interval: timeFrame,
             limit: 100
           }
         }
@@ -63,7 +69,7 @@ export const MACDChart = () => {
       }));
 
       setMacdData(macdDataPoints);
-      console.log("MACD data calculated:", macdDataPoints);
+      console.log(`MACD data calculated for ${timeFrame}:`, macdDataPoints);
     } catch (error) {
       console.error("Error fetching kline data:", error);
     }
@@ -73,7 +79,7 @@ export const MACDChart = () => {
     fetchKlineData();
     const interval = setInterval(fetchKlineData, 3600000); // Update every hour
     return () => clearInterval(interval);
-  }, []);
+  }, [timeFrame]);
 
   return (
     <Card className="p-6 bg-gray-800 border-gray-700">
