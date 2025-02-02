@@ -93,6 +93,8 @@ export const HistoricalPriceChart = ({ onTimeFrameChange }: HistoricalPriceChart
       setPriceData(historicalData);
       setLastUpdateTime(new Date());
       console.log(`Historical price data fetched for ${timeFrame}:`, historicalData);
+      console.log('Buy signals:', historicalData.filter(d => d.signal === 'buy').length);
+      console.log('Sell signals:', historicalData.filter(d => d.signal === 'sell').length);
     } catch (error) {
       console.error("Error fetching historical data:", error);
     } finally {
@@ -196,6 +198,7 @@ export const HistoricalPriceChart = ({ onTimeFrameChange }: HistoricalPriceChart
                 dataKey="price"
                 fill="#ef4444"
                 shape="circle"
+                r={6}
               />
               <Scatter
                 name="賣點"
@@ -203,6 +206,7 @@ export const HistoricalPriceChart = ({ onTimeFrameChange }: HistoricalPriceChart
                 dataKey="price"
                 fill="#22c55e"
                 shape="circle"
+                r={6}
               />
             </LineChart>
           </ResponsiveContainer>
