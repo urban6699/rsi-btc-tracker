@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Scatter } from "recharts";
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -236,21 +236,21 @@ export const HistoricalPriceChart = ({ onTimeFrameChange }: HistoricalPriceChart
                 strokeWidth={2}
                 dot={false}
               />
-              <Line
-                type="monotone"
+              <Scatter
+                name="買點"
                 data={priceData.filter(d => d.signal === 'buy')}
                 dataKey="price"
-                stroke="#ef4444"
-                strokeWidth={2}
-                dot={false}
+                fill="#ef4444"
+                shape="circle"
+                r={6}
               />
-              <Line
-                type="monotone"
+              <Scatter
+                name="賣點"
                 data={priceData.filter(d => d.signal === 'sell')}
                 dataKey="price"
-                stroke="#22c55e"
-                strokeWidth={2}
-                dot={false}
+                fill="#22c55e"
+                shape="circle"
+                r={6}
               />
             </LineChart>
           </ResponsiveContainer>
