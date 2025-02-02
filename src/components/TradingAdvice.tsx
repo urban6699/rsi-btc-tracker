@@ -3,7 +3,13 @@ import { Card } from "@/components/ui/card";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import axios from "axios";
 
-export const TradingAdvice = () => {
+type TimeFrame = "15m" | "1h" | "4h" | "1d" | "1w" | "1M";
+
+interface TradingAdviceProps {
+  timeFrame: TimeFrame;
+}
+
+export const TradingAdvice = ({ timeFrame }: TradingAdviceProps) => {
   const [rsi, setRsi] = useState<number | null>(null);
   const [showBuySignal, setShowBuySignal] = useState(false);
 
@@ -26,7 +32,7 @@ export const TradingAdvice = () => {
         {
           params: {
             symbol: "BTCUSDT",
-            interval: "1h",
+            interval: timeFrame,
             limit: 15
           }
         }
@@ -36,7 +42,7 @@ export const TradingAdvice = () => {
       const currentRSI = calculateRSI(prices);
       setRsi(currentRSI);
       setShowBuySignal(currentRSI < 30);
-      console.log("Current RSI:", currentRSI);
+      console.log(`Current RSI for ${timeFrame}:`, currentRSI);
     } catch (error) {
       console.error("Error calculating RSI:", error);
     }
@@ -46,7 +52,7 @@ export const TradingAdvice = () => {
     fetchAndCalculateRSI();
     const interval = setInterval(fetchAndCalculateRSI, 3600000); // Update every hour
     return () => clearInterval(interval);
-  }, []);
+  }, [timeFrame]);
 
   const getTradingAdvice = (rsi: number | null) => {
     if (rsi === null) return "等待數據...";
